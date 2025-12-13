@@ -1,0 +1,4 @@
+//php bin/console doctrine:database:create
+//etité camelcase singulier jamais pluriel premiere lettre majiscule, id automatique
+//php bn/console make:entity
+//Pour que les entites crées se creer dans la bdd on fai la migration 
