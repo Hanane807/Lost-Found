@@ -1,0 +1,41 @@
+[33mcommit e1489dcc5b231b6e34d7d42b939af0740e3657a3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Sat Dec 13 19:19:19 2025 +0100
+
+    modifs
+
+[33mcommit 8eb53e48140f8ae1fb8d36142285ca0e153b7d1d[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Sat Dec 13 19:16:45 2025 +0100
+
+    Remove .env from repository
+
+[33mcommit 71641291a8f7711e0f58b63309cdfb56880c60cc[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Sat Dec 13 19:15:18 2025 +0100
+
+    Initial commit
+
+[33mcommit 35716f6c293cca5c791f39f519d92977d345d94b[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Sat Dec 13 19:06:52 2025 +0100
+
+    Ignore .env and remove it from repository
+
+[33mcommit 64c0c8b44022449c542177e477c4610e9bc9bd37[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Sat Dec 13 18:59:46 2025 +0100
+
+    Initial Symfony structure: entities, relations, CRUD items
+
+[33mcommit 157b1e3be6bd52aa66d0e72966c5f1a286ec0a83[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Fri Dec 5 23:24:10 2025 +0100
+
+    Add webapp packages
+
+[33mcommit ee160d95f4341d91a49e6dab2a059bb39ce7e489[m
+Author: Hanane <mezhanane76@gmail.com>
+Date:   Fri Dec 5 23:22:27 2025 +0100
+
+    Add initial set of files
