@@ -2,72 +2,102 @@
 
 namespace App\Controller;
 
+use App\Entity\Item;
+use App\Form\ItemType;
+use App\Repository\ItemRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Doctrine\ORM\EntityManagerInterface ;
-use App\Entity\Item;
-use App\Repository\ItemRepository;
-
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class ItemController extends AbstractController
 {
+
     #[Route('/item', name: 'app_item')]
-    public function index(): Response
+    public function index(ItemRepository $itemRepository): Response
     {
         return $this->render('item/index.html.twig', [
-            'controller_name' => 'ItemController',
+        
+            'items' => $itemRepository->findAll(),
         ]);
     }
 
-    #[Route('/item/add', name: 'item_add')]
-    public function addItem(EntityManagerInterface $em): Response
+    #[Route('/item/new', name: 'item_new')]
+    public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
-       $item = new Item() ;
+        $item = new Item();
+        $form = $this->createForm(ItemType::class, $item);
+        
+        $form->handleRequest($request);
 
-       $item->setTitle('Telephone perdu') ;
-       $item->setDescription('Galaxy A51 noir') ;
-       $item->setCity('Oujda') ;
-       $item->setDateLost(new \DateTime('2025-05-15')) ;
-       $item->setStatus('found') ;
-       $item->setImage('image.jpg') ;
-       $item->setColor(' Noir') ;
-       $item->setKeywords('Telephone, samsung , noir , perdu') ;
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            // On récupère le fichier image
+            $imageFile = $form->get('imageFile')->getData();
 
-       $em->persist($item) ;
-       $em->flush();
+            // Si une image a été uploadée, on la traite
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // On nettoie le nom
+                $safeFilename = $slugger->slug($originalFilename);
+                // On crée un nom unique
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
 
-       return new Response ("Item ajouté avec succés");
+                try {
+                    // On déplace le fichier dans le dossier public/uploads/items
+                    $imageFile->move(
+                        $this->getParameter('items_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Gérer l'erreur si besoin
+                }
 
+                // On enregistre le NOM du fichier dans la base
+                $item->setImage($newFilename);
+            }
+
+            $em->persist($item);
+            $em->flush();
+
+            return $this->redirectToRoute('app_item'); // Redirection vers la liste
+        }
+
+        return $this->render('item/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/item/update/{id}', name: 'item_update')]
     public function updateItem(int $id , ItemRepository $itemRepository , EntityManagerInterface $em): Response
     {
-        $item = $itemRepository -> find($id) ;
+        $item = $itemRepository->find($id);
         if(!$item){
             throw $this->createNotFoundException('Item non trouvé');
         }
 
-    $item->setCity('Casablanca');
-    $item->setStatus('found');
+        $item->setCity('Casablanca');
+        $item->setStatus('found');
 
-    $em->flush();
+        $em->flush();
 
-    return new Response('Item modifié');
+        return new Response('Item modifié');
     }
 
     #[Route('/item/delete/{id}', name: 'item_delete')]
     public function deleteItem(int $id , ItemRepository $itemRepository , EntityManagerInterface $em): Response
     {
-        $item = $itemRepository -> find($id) ;
+        $item = $itemRepository->find($id);
         if(!$item){
             throw $this->createNotFoundException('Item non trouvé');
         }
 
-    $em->remove($item);
-    $em->flush();
+        $em->remove($item);
+        $em->flush();
 
-    return new Response('Item supprimé');
+        return new Response('Item supprimé');
     }
 }
