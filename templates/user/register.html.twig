@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}  {# <--- ICI TU OUVRES LE BLOC #}
+<div class="container" style="margin: 50px auto; max-width: 600px;">
+    <h1 class="text-center">Créer un compte</h1>
+
+    {{ form_start(registrationForm) }}
+        
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.firstName) }}
+        {{ form_row(registrationForm.lastName) }}
+        {{ form_row(registrationForm.phoneNumber) }}
+        {{ form_row(registrationForm.plainPassword) }}
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+            M'inscrire
+        </button>
+
+    {{ form_end(registrationForm) }}
+
+</div>
+{% endblock %}  
