@@ -36,8 +36,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Item>
      */
-    #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'user')]
-    private Collection $item;
 
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
@@ -48,9 +46,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20)]
     private ?string $phoneNumber = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Item::class)]
+    
+    private Collection $items;
+
+
     public function __construct()
     {
-        $this->item = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,15 +140,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Item>
      */
-    public function getItem(): Collection
+    public function getItems(): Collection
     {
-        return $this->item;
+        return $this->items;
     }
 
     public function addItem(Item $item): static
     {
-        if (!$this->item->contains($item)) {
-            $this->item->add($item);
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
             $item->setUser($this);
         }
 
@@ -154,7 +157,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeItem(Item $item): static
     {
-        if ($this->item->removeElement($item)) {
+        if ($this->items->removeElement($item)) {
             // set the owning side to null (unless already changed)
             if ($item->getUser() === $this) {
                 $item->setUser(null);

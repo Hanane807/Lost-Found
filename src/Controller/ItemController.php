@@ -28,7 +28,16 @@ final class ItemController extends AbstractController
     #[Route('/item/new', name: 'item_new')]
     public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
+
+           // Vérifier si l'utilisateur est connecté
+        $user = $this->getUser();
+        if (!$user) {
+            // S'il n'est pas connecté, on le renvoie vers la page de connexion
+            return $this->redirectToRoute('app_login');
+        }
+
         $item = new Item();
+        
         $form = $this->createForm(ItemType::class, $item);
         
         $form->handleRequest($request);
@@ -53,12 +62,12 @@ final class ItemController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // Gérer l'erreur si besoin
                 }
 
                 // On enregistre le NOM du fichier dans la base
                 $item->setImage($newFilename);
             }
+            $item->setUser($this->getUser());
 
             $em->persist($item);
             $em->flush();
