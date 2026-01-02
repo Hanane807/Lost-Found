@@ -11,6 +11,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User ;
 use App\Form\UserFormType;
 use App\Repository\UserRepository ;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use App\Security\AppCustomAuthenticator;
+
 
 
 final class UserController extends AbstractController
@@ -23,9 +27,14 @@ final class UserController extends AbstractController
         ]);
     }
 
-
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+#[Route('/register', name: 'app_register')]
+    public function register(
+        Request $request, 
+        UserPasswordHasherInterface $userPasswordHasher, 
+        EntityManagerInterface $entityManager,
+        UserAuthenticatorInterface $userAuthenticator, 
+        AppCustomAuthenticator $authenticator
+    ): Response
     {
         $user = new User();
         $form = $this->createForm(UserFormType::class, $user);
@@ -34,48 +43,26 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            //On récupère le mot de passe en clair
+            // Hachage du mot de passe
             $plainPassword = $form->get('plainPassword')->getData();
-
-            // On le HACHE (on le crypte pour la sécurité)
-            $hashedPassword = $userPasswordHasher->hashPassword(
-                $user,
-                $plainPassword
-            );
-            
-            // On remplace le mot de passe dans l'objet User
+            $hashedPassword = $userPasswordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
-
-            // On donne le rôle par défaut
             $user->setRoles(['ROLE_USER']);
 
-            //  On enregistre en base de données
+            // Enregistrement en BDD
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // 6. On redirige 
-            return $this->redirectToRoute('app_item');
+            return $userAuthenticator->authenticateUser(
+                $user,
+                $authenticator,
+                $request
+            );
         }
 
         return $this->render('user/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
-    }
-
-    #[Route('/user/add', name: 'add_user')]
-    public function addUser(EntityManagerInterface $em ,  UserPasswordHasherInterface $passwordHasher): Response
-    {
-        $user = new User();
-
-        $user->setEmail("hanane@gmail.com");
-        $hashedPassword = $passwordHasher->hashPassword($user, "Hanane");
-        $user->setPassword($hashedPassword);
-        $user->setRoles(["ROLE_USER"]);
-
-        $em->persist($user);
-        $em->flush();
-
-        return new Response("Utilisateur ajouté avec succès");
     }
 
     #[Route('/user/delete/{id}', name: 'delete_user')]
