@@ -1,17 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Lost & Found{% endblock %}</title>
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🔍</text></svg>">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        {# 1. IMPORT BOOTSTRAP (Pour la structure) #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        {# 2. IMPORT POLICE CARTOON (Fredoka) #}
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
+        {# 3. LE STYLE CSS COMPLET (Design Cartoon) #}
+        <style>
+            :root {
+                --toon-orange: #FF9F43;
+                --toon-orange-dark: #E67E22;
+                --toon-blue: #2980B9;
+                --toon-blue-light: #54A0FF;
+                --text-color: #2c3e50;
+                --bg-color: #eef5fdff; 
+            }
+
+            body {
+                font-family: 'Fredoka', sans-serif;
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                overflow-x: hidden;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* --- NAVBAR (Menu) --- */
+            .navbar {
+                background-color: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+                padding: 15px 0;
+                border-bottom: 2px solid rgba(0,0,0,0.05);
+            }
+
+            .navbar-brand {
+                font-size: 1.8rem;
+                color: var(--toon-orange) !important;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            }
+
+            .nav-link {
+                font-size: 1.1rem;
+                margin: 0 10px;
+                color: var(--text-color) !important;
+                transition: transform 0.2s;
+            }
+            .nav-link:hover {
+                transform: scale(1.1) rotate(-2deg);
+                color: var(--toon-blue) !important;
+            }
+
+            /* --- BOUTONS --- */
+            .btn {
+                border: none;
+                font-weight: 700;
+                text-transform: uppercase;
+                border-radius: 12px;
+                padding: 10px 20px;
+                transition: all 0.1s;
+            }
+            
+            .btn-primary {
+                background-color: var(--toon-blue-light);
+                box-shadow: 0 4px 0 #2e86de;
+            }
+            .btn-primary:hover {
+                background-color: #48dbfb;
+                transform: translateY(-2px);
+            }
+            .btn-primary:active {
+                transform: translateY(2px);
+                box-shadow: 0 0 0 #2e86de;
+            }
+
+            .btn-outline-primary {
+                background-color: white;
+                color: var(--toon-orange);
+                border: 2px solid var(--toon-orange);
+                box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            }
+            .btn-outline-primary:hover {
+                background-color: var(--toon-orange);
+                color: white;
+            }
+
+            /* --- CARTES --- */
+            .card-item {
+                background: white;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 2px solid rgba(0,0,0,0.05);
+                box-shadow: 0 8px 0 rgba(0,0,0,0.05);
+                transition: transform 0.2s;
+                height: 100%;
+            }
+            .card-item:hover {
+                transform: translateY(-10px);
+                border-color: var(--toon-blue-light);
+            }
+            .card-img-wrapper {
+                height: 200px;
+                background-color: #eee;
+                position: relative;
+            }
+            .card-img-wrapper img {
+                width: 100%; height: 100%; object-fit: cover;
+            }
+
+            /* --- HERO SECTION (Fond d'accueil) --- */
+            .hero-section {
+                background: linear-gradient(135deg, #81ecec 0%, #74b9ff 100%); 
+                /*background-image: url("{{ asset('images/hero-bg.png') }}");*/
+                background-size: cover;
+                background-position: center;
+                min-height: 80vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0 0 50px 50px;
+                margin-bottom: 50px;
+                box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            }
+
+            /* Gros Boutons Accueil */
+            .btn-toon {
+                font-size: 1.5rem;
+                padding: 15px 40px;
+                border-radius: 50px;
+                color: white;
+                text-decoration: none;
+                display: inline-block;
+                margin: 10px;
+                transition: transform 0.1s;
+                border: none;
+            }
+            .btn-toon-orange {
+                background-color: var(--toon-orange);
+                box-shadow: 0 6px 0 var(--toon-orange-dark);
+            }
+            .btn-toon-orange:hover { transform: translateY(-3px); color: white;}
+            .btn-toon-orange:active { transform: translateY(3px); box-shadow: none; }
+
+            .btn-toon-blue {
+                background-color: var(--toon-blue-light);
+                box-shadow: 0 6px 0 var(--toon-blue);
+            }
+            .btn-toon-blue:hover { transform: translateY(-3px); color: white;}
+            .btn-toon-blue:active { transform: translateY(3px); box-shadow: none; }
+
+            /* --- FOOTER --- */
+            footer {
+                margin-top: auto;
+                padding: 20px;
+                text-align: center;
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+        </style>
+
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        
+        {# --- MENU --- #}
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                {# Lien vers l'accueil #}
+                <a class="navbar-brand" href="{{ path('app_home') }}">
+                    🔍 Lost & Found
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+                        </li>
+                        
+                        
+                        {% if app.user %}
+                            {# CONNECTÉ #}
+                            <li class="nav-item ms-3">
+                                <a class="btn btn-primary" href="{{ path('item_new') }}">+ Publier</a>
+                            </li>
+                            <li class="nav-item ms-3">
+                                <span class="nav-link" style="font-size: 0.9rem;">👤 {{ app.user.firstName }}</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="{{ path('app_logout') }}">Déconnexion</a>
+                            </li>
+                        {% else %}
+                            {# NON CONNECTÉ #}
+                            <li class="nav-item ms-3">
+                                <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary" href="{{ path('app_register') }}">Inscription</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {# --- CONTENU PRINCIPAL --- #}
+        {# C'est ici que s'affichent tes pages (register, new, index...) #}
+        <div>
+            {% block body %}{% endblock %}
+        </div>
+
+        <footer>
+            Lost & Found © {{ "now"|date("Y") }} - Projet GI4
+        </footer>
+
+        {# --- SCRIPT BOOTSTRAP --- #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

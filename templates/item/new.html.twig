@@ -3,32 +3,76 @@
 {% block title %}Publier une annonce{% endblock %}
 
 {% block body %}
-<div class="container" style="margin: 50px auto; max-width: 600px;">
-    <h1 style="text-align: center; margin-bottom: 30px;">Publier une annonce</h1>
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-md-8 col-lg-7">
+        
+        {# CARTE BLANCHE #}
+        <div class="card-item p-4 p-md-5">
+            
+            <div class="text-center mb-4">
+                <h2 class="fw-bold" style="color: var(--toon-orange);">Publier une annonce 📢</h2>
+                <p class="text-muted small">Remplissez les détails pour qu'on puisse vous aider.</p>
+            </div>
 
-    {{ form_start(form) }}
-        
-        {{ form_row(form.title) }}
-        {{ form_row(form.category) }}
-        {{ form_row(form.city) }}
-        {{ form_row(form.dateLost) }}
-        {{ form_row(form.status) }}
-        {{ form_row(form.description) }}
-        
-        {# L'image #}
-        {{ form_row(form.imageFile) }}
+            {{ form_start(form) }}
+                
+                {# TITRE #}
+                <div class="mb-3">
+                    {{ form_row(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Clés de voiture BMW'}}) }}
+                </div>
 
-        {# On affiche les derniers champs ICI, avant le bouton #}
-        {{ form_row(form.color) }}
-        {{ form_row(form.keywords) }}
-        
-        <!-- Le bouton est maintenant TOUT EN BAS -->
-        <div style="margin-top: 30px; text-align: center;">
-            <button type="submit" class="btn btn-primary" style="padding: 10px 30px; font-size: 1.2em; cursor: pointer;">
-                Publier l'annonce
-            </button>
+                {# LIGNE 1 : Catégorie & Statut (Listes déroulantes) #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {# Pour les listes, on utilise 'form-select' #}
+                        {{ form_row(form.category, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.status, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                </div>
+
+                {# LIGNE 2 : Ville & Date #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.city, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Casablanca'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.dateLost, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                {# DESCRIPTION #}
+                <div class="mb-3">
+                    {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Décrivez l\'objet en détail...'}}) }}
+                </div>
+
+                {# ZONE PHOTO #}
+                <div class="mb-4 p-3 rounded-3" style="background-color: #f8f9fa; border: 2px dashed #dee2e6;">
+                    <h6 class="fw-bold text-muted mb-2 small">📸 Photo de l'objet</h6>
+                    {{ form_row(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                {# LIGNE 3 : Couleur & Mots clés #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.color, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Noir'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.keywords, {'attr': {'class': 'form-control', 'placeholder': 'Ex: cuir, portefeuille, argent'}}) }}
+                    </div>
+                </div>
+                
+                {# BOUTON (Plus petit et centré) #}
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-5 py-2 fs-6 shadow-sm fw-bold rounded-pill">
+                        PUBLIER L'ANNONCE
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
         </div>
 
-    {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}
