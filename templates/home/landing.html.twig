@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur Lost & Found{% endblock %}
+
+{% block body %}
+<!-- Conteneur principal centré -->
+<div class="hero-section">
+    <div class="text-center">
+        
+        <!-- Titre (Optionnel si tu as une image de fond explicite) -->
+        <h1 style="font-size: 4rem; color: white; text-shadow: 4px 4px 0px rgba(0,0,0,0.2); margin-bottom: 20px;">
+            Lost & Found
+        </h1>
+        <p style="font-size: 1.5rem; color: white; margin-bottom: 50px; text-shadow: 2px 2px 0px rgba(0,0,0,0.2);">
+            Ne perdez plus espoir, retrouvez vos objets !
+        </p>
+
+        <!-- Les Gros Boutons Cartoon -->
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            
+            <!-- Bouton Publier -->
+            <a href="{{ path('item_new') }}" class="btn-toon btn-toon-orange">
+                📢 J'ai perdu un objet
+            </a>
+
+            <!-- Bouton Chercher -->
+            <a href="{{ path('app_item') }}" class="btn-toon btn-toon-blue">
+                🔍 Je cherche un objet
+            </a>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
