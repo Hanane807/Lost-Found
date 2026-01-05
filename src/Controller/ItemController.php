@@ -12,16 +12,30 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Form\SearchType;
 
 final class ItemController extends AbstractController
 {
 
+
     #[Route('/item', name: 'app_item')]
-    public function index(ItemRepository $itemRepository): Response
+    public function index(ItemRepository $itemRepository, Request $request): Response
     {
+        // 1. On crée le formulaire
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+
+        // 2. Par défaut, on prend tout
+        $items = $itemRepository->findAll();
+
+        // 3. Si on fait une recherche, on filtre
+        if ($form->isSubmitted() && $form->isValid()) {
+            $items = $itemRepository->findWithSearch($form->getData());
+        }
+
         return $this->render('item/index.html.twig', [
-        
-            'items' => $itemRepository->findAll(),
+            'items' => $items,
+            'searchForm' => $form->createView() // On envoie le formulaire à la vue
         ]);
     }
 
@@ -29,7 +43,7 @@ final class ItemController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
 
-           // Vérifier si l'utilisateur est connecté
+        // Vérifier si l'utilisateur est connecté
         $user = $this->getUser();
         if (!$user) {
             // S'il n'est pas connecté, on le renvoie vers la page de connexion
@@ -75,38 +89,18 @@ final class ItemController extends AbstractController
             return $this->redirectToRoute('app_item'); // Redirection vers la liste
         }
 
+
+
+
+
+
+
+
+
         return $this->render('item/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/item/update/{id}', name: 'item_update')]
-    public function updateItem(int $id , ItemRepository $itemRepository , EntityManagerInterface $em): Response
-    {
-        $item = $itemRepository->find($id);
-        if(!$item){
-            throw $this->createNotFoundException('Item non trouvé');
-        }
-
-        $item->setCity('Casablanca');
-        $item->setStatus('found');
-
-        $em->flush();
-
-        return new Response('Item modifié');
-    }
-
-    #[Route('/item/delete/{id}', name: 'item_delete')]
-    public function deleteItem(int $id , ItemRepository $itemRepository , EntityManagerInterface $em): Response
-    {
-        $item = $itemRepository->find($id);
-        if(!$item){
-            throw $this->createNotFoundException('Item non trouvé');
-        }
-
-        $em->remove($item);
-        $em->flush();
-
-        return new Response('Item supprimé');
-    }
 }
+
