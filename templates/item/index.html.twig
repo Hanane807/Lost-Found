@@ -4,93 +4,140 @@
 
 {% block body %}
 
-{# --- EN-TÊTE : Titre + Bouton Publier --- #}
-<div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-    <div>
-        <h1 class="fw-bold" style="color: var(--toon-blue);">Dernières annonces</h1>
-        <p class="text-muted small mb-0">Trouvez ou signalez un objet perdu.</p>
-    </div>
-    <a href="{{ path('item_new') }}" class="btn btn-primary shadow-sm rounded-pill px-4">
-        + Publier une annonce
-    </a>
-</div>
+<div class="container py-5"> 
 
-{# --- LA BARRE DE RECHERCHE (Mise à jour avec keywords/city) --- #}
-<div class="card-item p-3 mb-5 shadow-sm" style="border-radius: 50px;">
-    {{ form_start(searchForm) }}
-    <div class="row g-2 align-items-center">
+    <style>
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            color: #2c3e50;
+            margin: 0;
+            font-size: 2.2rem;
+        }
+
+        .search-bar-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 40px; /* Espace sous la barre */
+            border: 1px solid #f0f0f0;
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            overflow: hidden;
+            transition: transform 0.2s;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .card-img-wrapper {
+            height: 180px;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         
-        {# 1. Mots Clés (keywords) #}
-        <div class="col-md-4">
-            {{ form_widget(searchForm.keywords, {'attr': {'class': 'form-control border-0 bg-light', 'style': 'border-radius: 30px;', 'placeholder': '🔍 Que cherchez-vous ?'}}) }}
-        </div>
+        .status-badge {
+            position: absolute; top: 10px; right: 10px; 
+            padding: 5px 12px; border-radius: 8px; 
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .status-lost { background-color: #e74c3c; }
+        .status-found { background-color: #27ae60; }
 
-        {# 2. Ville (city) #}
-        <div class="col-md-3">
-            {{ form_widget(searchForm.city, {'attr': {'class': 'form-control border-0 bg-light', 'style': 'border-radius: 30px;', 'placeholder': '📍 Ville'}}) }}
-        </div>
+        .btn-filter {
+            background-color: #E67E22;
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            padding: 10px;
+        }
+        .btn-filter:hover { background-color: #FF9F43; color: white; }
+    </style>
 
-        {# 3. Catégorie #}
-        <div class="col-md-3">
-            {{ form_widget(searchForm.category, {'attr': {'class': 'form-select border-0 bg-light', 'style': 'border-radius: 30px;'}}) }}
-        </div>
+    {# --- 1. BARRE DE RECHERCHE --- #}
+    <div class="search-bar-container">
+        {{ form_start(searchForm) }}
+        <div class="row g-3 align-items-center">
+            
+            <div class="col-lg-4 col-md-12">
+                {{ form_widget(searchForm.keywords, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '🔍 Ex: Clés, iPhone...', 'style': 'border-radius: 10px; font-size: 0.95rem;'}}) }}
+            </div>
 
-        {# 4. Bouton Filtrer #}
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-warning w-100 fw-bold text-white shadow-sm" style="border-radius: 30px; background-color: var(--toon-orange); border: none;">
-                Filtrer
-            </button>
-        </div>
+            <div class="col-lg-3 col-md-6">
+                {{ form_widget(searchForm.city, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '📍 Ville', 'style': 'border-radius: 10px; font-size: 0.95rem;'}}) }}
+            </div>
 
+            <div class="col-lg-3 col-md-6">
+                {{ form_widget(searchForm.category, {'attr': {'class': 'form-select form-select-lg', 'style': 'border-radius: 10px; font-size: 0.95rem;'}}) }}
+            </div>
+
+            <div class="col-lg-2 col-md-12">
+                <button type="submit" class="btn btn-filter w-100 py-2">
+                    FILTRER
+                </button>
+            </div>
+
+        </div>
+        {{ form_end(searchForm) }}
     </div>
-    {{ form_end(searchForm) }}
-</div>
 
-{# --- LA LISTE DES CARTES --- #}
-<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-    {% for item in items %}
-        <div class="col">
-            <div class="card-item">
-                
-                {# ZONE IMAGE #}
-                <div class="card-img-wrapper">
-                    {% if item.image %}
-                        <img src="{{ asset('uploads/items/' ~ item.image) }}" alt="{{ item.title }}">
-                    {% else %}
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted bg-light">
-                            <span>Pas de photo 📷</span>
-                        </div>
-                    {% endif %}
+   {# --- 2. TITRE --- #}
+    <div class="mb-4">
+        <h1 class="page-title">Dernières annonces</h1>
+        <p class="text-muted mt-1 mb-0">Les objets ajoutés récemment.</p>
+    </div>
 
-                    {# BADGE STATUT #}
-                    <span class="status-badge {{ item.status == 'lost' ? 'status-lost' : 'status-found' }}">
-                        {{ item.status == 'lost' ? 'PERDU' : 'TROUVÉ' }}
-                    </span>
-                </div>
-
-                {# ZONE TEXTE #}
-                <div class="p-3">
-                    <h5 class="fw-bold mb-1 text-truncate" style="color: var(--text-dark);">{{ item.title }}</h5>
+    {# --- 3. LISTE DES CARTES --- #}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for item in items %}
+            <div class="col">
+                <div class="card-item">
                     
-                    <p class="text-muted small mb-2">
-                        <strong>📍 {{ item.city }}</strong> <br>
-                        <span style="font-size: 0.85em;">📅 {{ item.dateLost|date('d/m/Y') }}</span>
-                    </p>
-                    
-                    <p class="small text-muted text-truncate" style="max-height: 40px; overflow: hidden;">
-                        {{ item.description }}
-                    </p>
+                    <div class="card-img-wrapper">
+                        {% if item.image %}
+                            <img src="{{ asset('uploads/items/' ~ item.image) }}" alt="{{ item.title }}">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted small">
+                                Pas de photo
+                            </div>
+                        {% endif %}
+
+                        <span class="status-badge {{ item.status == 'lost' ? 'status-lost' : 'status-found' }}">
+                            {{ item.status == 'lost' ? 'PERDU' : 'TROUVÉ' }}
+                        </span>
+                    </div>
+
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1 text-truncate text-dark" style="font-size: 1.1rem;">{{ item.title }}</h6>
+                        
+                        <p class="text-muted small mb-2">
+                            {{ item.city }} • {{ item.dateLost|date('d/m/Y') }}
+                        </p>
+                        
+                        <p class="text-muted small text-truncate mb-0">
+                            {{ item.description }}
+                        </p>
+                    </div>
+
                 </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">Aucune annonce trouvée avec ces critères. 🤔</p>
+            </div>
+        {% endfor %}
+    </div>
 
-            </div>
-        </div>
-    {% else %}
-        <div class="col-12 text-center py-5">
-            <div class="alert alert-light shadow-sm d-inline-block rounded-pill px-5">
-                🤷‍♂️ Aucun objet trouvé avec ces critères.
-            </div>
-        </div>
-    {% endfor %}
 </div>
-
 {% endblock %}
