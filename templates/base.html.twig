@@ -21,7 +21,7 @@
                 --toon-blue: #2980B9;
                 --toon-blue-light: #54A0FF;
                 --text-color: #2c3e50;
-                --bg-color: #eef5fdff; 
+                --bg-color: #DDE6ED; 
             }
 
             body {
@@ -187,33 +187,41 @@
                 </button>
                 
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
-                        </li>
-                        
-                        
-                        {% if app.user %}
-                            {# CONNECTÉ #}
-                            <li class="nav-item ms-3">
-                                <a class="btn btn-primary" href="{{ path('item_new') }}">+ Publier</a>
-                            </li>
-                            <li class="nav-item ms-3">
-                                <span class="nav-link" style="font-size: 0.9rem;">👤 {{ app.user.firstName }}</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="{{ path('app_logout') }}">Déconnexion</a>
-                            </li>
-                        {% else %}
-                            {# NON CONNECTÉ #}
-                            <li class="nav-item ms-3">
-                                <a class="nav-link" href="{{ path('app_login') }}">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-primary" href="{{ path('app_register') }}">Inscription</a>
-                            </li>
-                        {% endif %}
-                    </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+    </li>
+    
+    {# --- LE BOUTON EST MAINTENANT ICI, VISIBLE POUR TOUS --- #}
+    {# Si on clique sans être connecté, le Controller redirigera vers le Login #}
+    <li class="nav-item ms-3">
+        <a class="btn btn-primary" href="{{ path('item_new') }}">+ Publier</a>
+    </li>
+    
+    {% if app.user %}
+        {# --- SI CONNECTÉ : Nom + Logout --- #}
+        <li class="nav-item ms-3">
+            <span class="nav-link" style="font-size: 0.9rem;">
+                <i class="bi bi-person-circle"></i> 👤 {{ app.user.firstName }}
+            </span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-danger" href="{{ path('app_logout') }}">Déconnexion</a>
+        </li>
+    {% else %}
+        {# --- SI PAS CONNECTÉ : Login + Inscription --- #}
+        <li class="nav-item ms-3">
+            <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+        </li>
+        <li class="nav-item ms-2">
+            <a class="btn btn-outline-primary" href="{{ path('app_register') }}">Inscription</a>
+        </li>
+    {% endif %}
+</ul>
+                    
+
+
                 </div>
             </div>
         </nav>

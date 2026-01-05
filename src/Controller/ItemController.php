@@ -21,9 +21,11 @@ final class ItemController extends AbstractController
     #[Route('/item', name: 'app_item')]
     public function index(ItemRepository $itemRepository, Request $request): Response
     {
+
         // 1. On crée le formulaire
         $form = $this->createForm(SearchType::class);
         $form->handleRequest($request);
+
 
         // 2. Par défaut, on prend tout
         $items = $itemRepository->findAll();
@@ -88,12 +90,6 @@ final class ItemController extends AbstractController
 
             return $this->redirectToRoute('app_item'); // Redirection vers la liste
         }
-
-
-
-
-
-
 
 
 
