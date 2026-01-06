@@ -55,14 +55,14 @@
         .status-found { background-color: #27ae60; }
 
         .btn-filter {
-            background-color: #E67E22;
+            background-color: #2e86de;
             color: white;
             border-radius: 10px;
             font-weight: 600;
             border: none;
             padding: 10px;
         }
-        .btn-filter:hover { background-color: #FF9F43; color: white; }
+        .btn-filter:hover { background-color: #2e86ded5; color: white; }
     </style>
 
     {# --- 1. BARRE DE RECHERCHE --- #}
@@ -100,8 +100,14 @@
 
     {# --- 3. LISTE DES CARTES --- #}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for item in items %}
-            <div class="col">
+      {% for item in items %}
+        <div class="col">
+            
+            {# --- AJOUT DU LIEN ICI --- #}
+            {# On pointe vers la route 'item_show' avec l'ID de l'objet #}
+            {# text-decoration-none : pour ne pas souligner le texte #}
+            <a href="{{ path('item_show', {'id': item.id}) }}" class="text-decoration-none">
+                
                 <div class="card-item">
                     
                     <div class="card-img-wrapper">
@@ -131,7 +137,10 @@
                     </div>
 
                 </div>
-            </div>
+
+            </a>
+
+        </div>
         {% else %}
             <div class="col-12 text-center py-5">
                 <p class="text-muted fs-5">Aucune annonce trouvée avec ces critères. 🤔</p>
