@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block body %}
+
+<style>
+    /* Conteneur de l'image (Fond blanc propre) */
+    .detail-image-box {
+        background-color: white;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-height: 500px; /* On limite la hauteur pour ne pas que ça soit géant */
+    }
+    
+    .detail-image-box img {
+        max-width: 100%;
+        max-height: 480px;
+        object-fit: contain; /* L'image ne sera pas coupée */
+        border-radius: 8px;
+    }
+
+    /* Carte de contact (Plus compacte) */
+    .owner-card {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    .btn-contact {
+        background-color: #27ae60; /* Gris foncé pro */
+        color: white;
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        margin-top: 15px;
+    }
+    .btn-contact:hover { background-color: #70fe54ff; color: white; }
+
+    .avatar-circle {
+        width: 45px; height: 45px;
+        background-color: #f1f3f5;
+        color: #2c3e50;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1.1rem;
+        margin-right: 15px;
+    }
+    
+    /* Petits détails */
+    .meta-info { font-size: 0.9rem; color: #6c757d; }
+    .badge-custom { padding: 5px 10px; font-size: 0.75rem; border-radius: 6px; text-transform: uppercase; }
+</style>
+
+<div class="container py-4">
+    
+    {# Lien retour discret #}
+    <div class="mb-4">
+        <a href="{{ path('app_item') }}" class="text-decoration-none text-muted small fw-bold">
+            &larr; Retour aux annonces
+        </a>
+    </div>
+
+    <div class="row g-4">
+        
+        {# --- COLONNE GAUCHE : IMAGE --- #}
+        <div class="col-md-7 col-lg-8">
+            <div class="detail-image-box">
+                {% if item.image %}
+                    <img src="{{ asset('uploads/items/' ~ item.image) }}" alt="{{ item.title }}">
+                {% else %}
+                    <div class="text-muted small">Pas de photo disponible 📷</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# --- COLONNE DROITE : INFOS --- #}
+        <div class="col-md-5 col-lg-4">
+            
+            <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
+                
+                {# Badge Statut #}
+                <span class="badge badge-custom mb-2 {{ item.status == 'lost' ? 'bg-danger' : 'bg-success' }}">
+                    {{ item.status == 'lost' ? 'Perdu' : 'Trouvé' }}
+                </span>
+
+                {# Titre (Taille raisonnable h2) #}
+                <h2 class="fw-bold text-dark mb-4" style="font-size: 1.8rem;">{{ item.title }}</h2>
+                
+                <p class="meta-info mb-4 border-bottom pb-3">
+                    📍 {{ item.city }} &nbsp;•&nbsp; 📅 {{ item.dateLost|date('d/m/Y') }}
+                </p>
+
+                {# Description #}
+                <div class="mb-4">
+                    <h6 class="fw-bold text-dark" style="font-size: 0.95rem;">Description</h6>
+                    <p class="text-muted" style="font-size: 0.9rem; line-height: 1.6;">
+                        {{ item.description }}
+                    </p>
+                    
+                    {% if item.color %}
+                        <p class="text-muted small mt-2">
+                            <strong>Couleur :</strong> {{ item.color }}
+                        </p>
+                    {% endif %}
+                </div>
+
+                {# --- BLOC CONTACT (Propriétaire) --- #}
+                <div class="owner-card mt-auto">
+                    <h6 class="fw-bold mb-3" style="font-size: 0.9rem; color: #888;">Publié par :</h6>
+                    
+                    <div class="d-flex align-items-center">
+                        {% if item.user %}
+                            <div class="avatar-circle">
+                                {{ item.user.firstName|first|upper }}
+                            </div>
+                            <div style="line-height: 1.2;">
+                                <div class="fw-bold text-dark">{{ item.user.firstName }} {{ item.user.lastName }}</div>
+                                <small class="text-muted" style="font-size: 0.8rem;">Membre certifié</small>
+                            </div>
+                        {% else %}
+                            <span class="text-muted small">Anonyme</span>
+                        {% endif %}
+                    </div>
+
+                    {# Bouton d'appel (Gris foncé, plus sobre) #}
+                    {% if item.user and item.user.phoneNumber %}
+                        <a href="tel:{{ item.user.phoneNumber }}" class="btn btn-contact">
+                            📞 {{ item.user.phoneNumber }}
+                        </a>
+                    {% else %}
+                        <button class="btn btn-light w-100 mt-3 text-muted" disabled style="font-size: 0.9rem;">
+                            Pas de numéro
+                        </button>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -91,10 +91,16 @@ final class ItemController extends AbstractController
             return $this->redirectToRoute('app_item'); // Redirection vers la liste
         }
 
-
-
         return $this->render('item/new.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/item/{id}', name: 'item_show')]
+    public function show(Item $item): Response
+    {
+        return $this->render('item/show.html.twig', [
+            'item' => $item,
         ]);
     }
 
