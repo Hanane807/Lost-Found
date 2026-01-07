@@ -104,5 +104,69 @@ final class ItemController extends AbstractController
         ]);
     }
 
+
+    #[Route('/item/{id}/edit', name: 'item_edit')]
+    public function edit(Request $request, Item $item, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    {
+       
+        if ($item->getUser() !== $this->getUser()) {
+            
+            throw $this->createAccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
+
+        // On crée le formulaire rempli avec les infos de l'objet
+        $form = $this->createForm(ItemType::class, $item);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Gestion de la nouvelle image 
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('items_directory'),
+                        $newFilename
+                    );
+                    // On met à jour l'image seulement si une nouvelle est envoyée
+                    $item->setImage($newFilename);
+                } catch (FileException $e) {
+                    // Erreur upload
+                }
+            }
+
+            $em->flush(); 
+
+            return $this->redirectToRoute('item_show', ['id' => $item->getId()]);
+        }
+
+        return $this->render('item/edit.html.twig', [
+            'form' => $form->createView(),
+            'item' => $item,
+        ]);
+    }
+
+   
+    #[Route('/item/{id}/delete', name: 'item_delete', methods: ['POST'])]
+    public function delete(Request $request, Item $item, EntityManagerInterface $em): Response
+    {
+       
+        if ($item->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas le droit de supprimer cet objet.');
+        }
+
+        // 2. Protection CSRF (Pour éviter les suppressions par erreur via un lien)
+        if ($this->isCsrfTokenValid('delete'.$item->getId(), $request->request->get('_token'))) {
+            $em->remove($item);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('app_item');
+    }
+
 }
 

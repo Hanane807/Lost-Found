@@ -14,6 +14,7 @@ use App\Repository\UserRepository ;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Security\AppCustomAuthenticator;
+use App\Form\ProfileType;
 
 
 
@@ -108,4 +109,40 @@ final class UserController extends AbstractController
 
         return new Response("Utilisateur mis à jour avec succès");
     }
+
+    
+    #[Route('/profile/edit', name: 'app_profile_edit')]
+    public function editProfile(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = $this->getUser();
+        if (!$user) return $this->redirectToRoute('app_login');
+
+        $form = $this->createForm(ProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Si on est là, c'est que le mot de passe actuel est BON (grâce au formulaire)
+
+            // On regarde si l'utilisateur veut changer de mot de passe
+            $newPassword = $form->get('newPassword')->getData();
+            if ($newPassword) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Profil mis à jour !');
+
+            return $this->redirectToRoute('app_item');
+        }
+
+        return $this->render('user/edit_profile.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+
+
 }
