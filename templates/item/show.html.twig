@@ -5,149 +5,226 @@
 {% block body %}
 
 <style>
-    /* Conteneur de l'image (Fond blanc propre) */
-    .detail-image-box {
-        background-color: white;
-        padding: 10px;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        height: 100%;
+    .font-pro { font-family: 'Poppins', sans-serif; }
+
+    /* LE CONTENEUR PRINCIPAL */
+    .main-card {
+        background: white;
+        border-radius: 15px; /* Arrondi plus doux */
+        box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        overflow: hidden;
+        border: none;
+    }
+
+    /* PARTIE GAUCHE : IMAGE (Réduite) */
+    .image-section {
+        background-color: #f8f9fa;
+        min-height: 400px; /* Réduit de 500 à 400 */
         display: flex;
         align-items: center;
         justify-content: center;
-        max-height: 500px; /* On limite la hauteur pour ne pas que ça soit géant */
+        padding: 20px; /* Moins d'espace autour */
+        position: relative;
     }
     
-    .detail-image-box img {
+    .image-section img {
         max-width: 100%;
-        max-height: 480px;
-        object-fit: contain; /* L'image ne sera pas coupée */
-        border-radius: 8px;
+        max-height: 400px; /* L'image ne sera pas géante */
+        object-fit: contain;
+        filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+        border-radius: 6px;
     }
 
-    /* Carte de contact (Plus compacte) */
-    .owner-card {
-        background-color: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 30px;
+    /* PARTIE DROITE : INFOS (Plus serrée) */
+    .info-section {
+        padding: 30px; /* Réduit de 50 à 30 */
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
-    .btn-contact {
-        background-color: #27ae60; /* Gris foncé pro */
+    /* Badge Statut (Plus petit) */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.7rem; /* Plus petit */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .status-lost { background-color: #ffe5e5; color: #d63031; }
+    .status-found { background-color: #e5f9ed; color: #27ae60; }
+
+    /* Titre et détails (Réduits) */
+    h1 { 
+        font-weight: 700; 
+        color: #2c3e50; 
+        font-size: 1.8rem; /* Réduit de 2.5 à 1.8 */
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .location-date { 
+        color: #95a5a6; 
+        font-weight: 500; 
+        font-size: 0.85rem; 
+        margin-bottom: 20px; 
+    }
+    .description-title { 
+        font-size: 0.75rem; 
+        text-transform: uppercase; 
+        letter-spacing: 1px; 
+        color: #b2bec3; 
+        font-weight: 700; 
+        margin-bottom: 5px; 
+    }
+    .description-text { 
+        color: #636e72; 
+        line-height: 1.6; 
+        font-size: 0.9rem; /* Texte standard plus petit */
+    }
+
+    /* SECTION PROPRIÉTAIRE */
+    .owner-section {
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid #f1f2f6;
+    }
+    
+    .avatar-placeholder {
+        width: 40px; height: 40px; /* Avatar plus petit */
+        background: #dfe6e9; color: #636e72;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1rem;
+        margin-right: 12px;
+    }
+
+    .btn-call {
+        background-color: #27ae60;
         color: white;
         width: 100%;
-        padding: 10px;
+        padding: 10px; /* Bouton moins gros */
         border-radius: 8px;
         font-weight: 600;
         border: none;
-        margin-top: 15px;
+        font-size: 0.95rem;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: transform 0.2s;
     }
-    .btn-contact:hover { background-color: #70fe54ff; color: white; }
+    .btn-call:hover { background-color: #219150; transform: translateY(-2px); color: white; }
 
-    .avatar-circle {
-        width: 45px; height: 45px;
-        background-color: #f1f3f5;
-        color: #2c3e50;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 1.1rem;
-        margin-right: 15px;
+    /* Boutons Edit/Delete */
+    .btn-action {
+        width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; transition: 0.2s; font-size: 0.8rem;
     }
-    
-    /* Petits détails */
-    .meta-info { font-size: 0.9rem; color: #6c757d; }
-    .badge-custom { padding: 5px 10px; font-size: 0.75rem; border-radius: 6px; text-transform: uppercase; }
+    .btn-edit { background: #e3f2fd; color: #0984e3; }
+    .btn-delete { background: #ffeaa7; color: #d63031; }
+    .btn-action:hover { transform: scale(1.1); }
+
 </style>
 
-<div class="container py-4">
+<div class="container py-4 font-pro">
     
-    {# Lien retour discret #}
-    <div class="mb-4">
-        <a href="{{ path('app_item') }}" class="text-decoration-none text-muted small fw-bold">
-            &larr; Retour aux annonces
-        </a>
-    </div>
+    {# Lien retour #}
+    <a href="{{ path('app_item') }}" class="text-decoration-none text-muted mb-3 d-inline-block fw-bold small">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
 
-    <div class="row g-4">
-        
-        {# --- COLONNE GAUCHE : IMAGE --- #}
-        <div class="col-md-7 col-lg-8">
-            <div class="detail-image-box">
+    {# LA GRANDE CARTE #}
+    <div class="card main-card">
+        <div class="row g-0">
+            
+            {# --- GAUCHE : IMAGE --- #}
+            <div class="col-lg-6 image-section">
+                
+                {# BOUTONS ADMIN #}
+                {% if app.user and app.user == item.user %}
+                    <div class="position-absolute top-0 end-0 m-3 d-flex gap-2">
+                        <a href="{{ path('item_edit', {'id': item.id}) }}" class="btn-action btn-edit" title="Modifier">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <form method="post" action="{{ path('item_delete', {'id': item.id}) }}" onsubmit="return confirm('Supprimer ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
+                            <button class="btn-action btn-delete">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+
                 {% if item.image %}
                     <img src="{{ asset('uploads/items/' ~ item.image) }}" alt="{{ item.title }}">
                 {% else %}
-                    <div class="text-muted small">Pas de photo disponible 📷</div>
+                    <div class="text-muted small">Pas de photo 📷</div>
                 {% endif %}
             </div>
-        </div>
 
-        {# --- COLONNE DROITE : INFOS --- #}
-        <div class="col-md-5 col-lg-4">
-            
-            <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
-                
-                {# Badge Statut #}
-                <span class="badge badge-custom mb-2 {{ item.status == 'lost' ? 'bg-danger' : 'bg-success' }}">
-                    {{ item.status == 'lost' ? 'Perdu' : 'Trouvé' }}
-                </span>
-
-                {# Titre (Taille raisonnable h2) #}
-                <h2 class="fw-bold text-dark mb-4" style="font-size: 1.8rem;">{{ item.title }}</h2>
-                
-                <p class="meta-info mb-4 border-bottom pb-3">
-                    📍 {{ item.city }} &nbsp;•&nbsp; 📅 {{ item.dateLost|date('d/m/Y') }}
-                </p>
-
-                {# Description #}
-                <div class="mb-4">
-                    <h6 class="fw-bold text-dark" style="font-size: 0.95rem;">Description</h6>
-                    <p class="text-muted" style="font-size: 0.9rem; line-height: 1.6;">
-                        {{ item.description }}
-                    </p>
+            {# --- DROITE : INFOS --- #}
+            <div class="col-lg-6">
+                <div class="info-section">
                     
-                    {% if item.color %}
-                        <p class="text-muted small mt-2">
-                            <strong>Couleur :</strong> {{ item.color }}
+                    <div>
+                        <span class="status-badge {{ item.status == 'lost' ? 'status-lost' : 'status-found' }}">
+                            {{ item.status == 'lost' ? 'PERDU' : 'TROUVÉ' }}
+                        </span>
+
+                        <h1>{{ item.title }}</h1>
+                        
+                        <p class="location-date">
+                            <i class="bi bi-geo-alt-fill"></i> {{ item.city }} &nbsp;•&nbsp; 
+                            <i class="bi bi-calendar-event"></i> {{ item.dateLost|date('d/m/Y') }}
                         </p>
-                    {% endif %}
-                </div>
 
-                {# --- BLOC CONTACT (Propriétaire) --- #}
-                <div class="owner-card mt-auto">
-                    <h6 class="fw-bold mb-3" style="font-size: 0.9rem; color: #888;">Publié par :</h6>
-                    
-                    <div class="d-flex align-items-center">
-                        {% if item.user %}
-                            <div class="avatar-circle">
-                                {{ item.user.firstName|first|upper }}
+                        <div class="mb-3">
+                            <p class="description-title">DESCRIPTION</p>
+                            <p class="description-text">
+                                {{ item.description }}
+                            </p>
+                        </div>
+
+                        {% if item.color %}
+                            <div class="mb-3">
+                                <p class="description-title">COULEUR</p>
+                                <p class="description-text">{{ item.color }}</p>
                             </div>
-                            <div style="line-height: 1.2;">
-                                <div class="fw-bold text-dark">{{ item.user.firstName }} {{ item.user.lastName }}</div>
-                                <small class="text-muted" style="font-size: 0.8rem;">Membre certifié</small>
-                            </div>
-                        {% else %}
-                            <span class="text-muted small">Anonyme</span>
                         {% endif %}
                     </div>
 
-                    {# Bouton d'appel (Gris foncé, plus sobre) #}
-                    {% if item.user and item.user.phoneNumber %}
-                        <a href="tel:{{ item.user.phoneNumber }}" class="btn btn-contact">
-                            📞 {{ item.user.phoneNumber }}
-                        </a>
-                    {% else %}
-                        <button class="btn btn-light w-100 mt-3 text-muted" disabled style="font-size: 0.9rem;">
-                            Pas de numéro
-                        </button>
+                    {# --- ZONE PROPRIÉTAIRE --- #}
+                    {% if not app.user or app.user != item.user %}
+                        <div class="owner-section">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if item.user %}
+                                    <div class="avatar-placeholder">
+                                        {{ item.user.firstName|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.95rem;">{{ item.user.firstName }} {{ item.user.lastName }}</div>
+                                        <small class="text-muted" style="font-size: 0.75rem;">Membre</small>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small">Anonyme</span>
+                                {% endif %}
+                            </div>
+
+                            {% if item.user and item.user.phoneNumber %}
+                                <a href="tel:{{ item.user.phoneNumber }}" class="btn btn-call">
+                                    <i class="bi bi-telephone-fill"></i> {{ item.user.phoneNumber }}
+                                </a>
+                            {% else %}
+                                <button class="btn btn-light w-100 py-2 text-muted fw-bold border" disabled style="font-size: 0.9rem;">
+                                    Pas de numéro
+                                </button>
+                            {% endif %}
+                        </div>
                     {% endif %}
+
                 </div>
-
             </div>
-        </div>
 
+        </div>
     </div>
+
 </div>
 {% endblock %}

@@ -19,7 +19,6 @@ class UserFormType extends AbstractType
         $builder
             ->add('email', EmailType::class, ['label' => 'Adresse Email'])
             
-            // Tes champs sont bien là :
             ->add('firstName', TextType::class, ['label' => 'Prénom'])
             ->add('lastName', TextType::class, ['label' => 'Nom'])
             ->add('phoneNumber', TextType::class, ['label' => 'Téléphone'])

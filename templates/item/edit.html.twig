@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'annonce{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center my-5">
+    <div class="col-md-8 col-lg-7">
+        
+        {# CARTE BLANCHE #}
+        <div class="card-item p-4 p-md-5">
+            
+            <div class="text-center mb-4">
+                <h2 class="fw-bold" style="color: var(--primary);">Modifier mon annonce ✏️</h2>
+                <p class="text-muted small">Mettez à jour les informations de votre objet.</p>
+            </div>
+
+            {{ form_start(form) }}
+                
+                {# TITRE #}
+                <div class="mb-3">
+                    {{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                {# LIGNE 1 #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.category, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.status, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                </div>
+
+                {# LIGNE 2 #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.city, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.dateLost, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                {# DESCRIPTION #}
+                <div class="mb-3">
+                    {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
+                </div>
+
+                {# ZONE PHOTO #}
+                <div class="mb-4 p-3 rounded-3" style="background-color: #f8f9fa; border: 2px dashed #dee2e6;">
+                    <h6 class="fw-bold text-muted mb-2 small">📸 Changer la photo (Laisser vide pour garder l'actuelle)</h6>
+                    {{ form_row(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                {# LIGNE 3 #}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.color, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.keywords, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                
+                {# BOUTONS #}
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ path('item_show', {'id': item.id}) }}" class="text-muted text-decoration-none">
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow-sm">
+                        ENREGISTRER
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

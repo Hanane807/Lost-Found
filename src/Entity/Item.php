@@ -38,7 +38,8 @@ class Item
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $keywords = null;
 
-    #[ORM\ManyToOne(inversedBy: 'item')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'items')]

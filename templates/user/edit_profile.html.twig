@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-md-8 col-lg-6">
+        
+        <div class="card-item p-4 p-md-5">
+            
+            <div class="text-center mb-4">
+                <h2 class="fw-bold" style="color: var(--primary);">Modifier mon profil 👤</h2>
+                <p class="text-muted small">Mettez à jour vos informations personnelles.</p>
+            </div>
+
+            {{ form_start(form) }}
+                
+                <div class="mb-3">
+                    {{ form_row(form.email) }}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.firstName) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.lastName) }}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    {{ form_row(form.phoneNumber) }}
+                </div>
+
+                <hr class="my-4 text-muted opacity-25">
+                
+                {# ZONE SÉCURITÉ #}
+                <div class="bg-light p-3 rounded-3 mb-4">
+                    <h6 class="fw-bold text-danger mb-3"><i class="bi bi-shield-lock"></i> SÉCURITÉ</h6>
+                    
+                    {# 1. Mot de passe ACTUEL (Requis) #}
+                    <div class="mb-3">
+                        {{ form_row(form.currentPassword) }}
+                    </div>
+
+                    {# 2. NOUVEAU mot de passe (Optionnel) #}
+                    <div>
+                        {{ form_row(form.newPassword) }}
+                    </div>
+                </div>
+
+                {# --- CORRECTION DES BOUTONS --- #}
+                {# d-flex : active le mode flexible #}
+                {# justify-content-between : pousse les boutons aux extrémités #}
+                {# align-items-center : centre verticalement #}
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    
+                    <a href="{{ path('app_item') }}" class="text-decoration-none text-secondary fw-bold">
+                        Annuler
+                    </a>
+                    
+                    <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm fw-bold rounded-pill">
+                        ENREGISTRER
+                    </button>
+
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
